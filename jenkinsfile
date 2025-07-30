@@ -55,6 +55,19 @@ pipeline{
             }
         }
 
+    // using docker plugins to build container image
+        stage('building docker image'){
+            steps{
+                echo 'starting docker build process'
+                script{
+                    def imageName = "tanwebapp-iis-ltsc2022"
+                    def imageTag = "codev1"
+                    docker.build("${imageName}:${imageTag}",".")
+                }
+                //verify image build
+                bat 'docker images | findstr tanwebapp'
+            }
+        }  
         
     }
 }
