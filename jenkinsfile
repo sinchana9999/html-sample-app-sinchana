@@ -29,6 +29,7 @@ pipeline{
         stage('takign code of github repo'){
             steps{
                 echo 'cloning repo'
+                echo 'messageeee'
                 git url:"${REPO_NAME}", branch:"${BRANCH_NAME}"
             }
         }
