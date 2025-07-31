@@ -61,7 +61,7 @@ pipeline{
             steps{
                 echo 'starting docker build process'
                 script{
-                    def imageName = "tanwebapp-iis-ltsc2022"
+                    def imageName = "sinchana111/tanwebapp-iis-ltsc2022"
                     def imageTag = "codev1"
                     docker.build("${imageName}:${imageTag}",".")
                 }
