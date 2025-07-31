@@ -106,6 +106,18 @@ pipeline{
                 }
             }
         }
+
+        // stage to deply app as container using IIS docker image
+        stage('deply app using container image'){
+            steps{
+                echo 'deploying app using container'
+                bat """ 
+                docker run -itd --name sinchana -p 1234:80  ${sinchana111/tanwebapp-iis-ltsc2022} {codev1}
+                docker ps | findstr
+                """
+            }
+        }
+        // implement DAST 
         
     }
 }
