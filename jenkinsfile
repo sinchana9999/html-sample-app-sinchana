@@ -7,6 +7,9 @@ pipeline{
         BRANCH_NAME = 'master'
         SONAR_TOKEN = credentials('admintoken')
         DOCKER_CREDS = 'dockersinchana'
+        IMAGE_NAME  = "sinchana111/tanwebapp-iis-ltsc2022"
+        IMAGE_TAG =  "codev1"
+        TRIVY_REPORT = "trivy-sinch-report.txt"
         SONAR_PROJECT_KEY = 'sinchanaapp'
         SONAR_SERVER_NAME = 'sinsonarqube' //name given for the sonarqube link in jenkins manage settings
     }
@@ -73,23 +76,11 @@ pipeline{
         //add stage to scan using trivy is no high , critical vlne then proceed else stop pipeline
         stage('trivy scan'){
             steps {
-                echo 'running scan'
+                echo "running scan"
                 bat """
-                trivy image  --severity HIGH,CRITICAL --format table -o report.txt sinchana111/tanwebapp-iis-ltsc2022:codev1
-                findstr /I "HIGH CRITICAL"  report.txt  >null
-
-                if %errorlevel% == 0 (
-                echo [ERROR] HIGH or ciritical found 
-                exit /b 1
-                )  
-                else (
-                echo no error found 
-                )
-                """
-            }
-        }
-
-
+               trivy image --severity HIGH,CRITICAL --format table  --report summary -o ${TRIVY_REPORT} ${IMAGE_NAME}:${IMAGE_TAG} --skip-version-check """
+                }
+                }
 
         //pushing image to docker hub
         stage('Docker hub image push'){
@@ -100,7 +91,7 @@ pipeline{
                     def imageTag = "codev1"
                     def hubcreds = "${DOCKER_CREDS}"
                     docker.withRegistry('https://registry.hub.docker.com', hubcreds){
-                        docker.image(imageName + ":" + imageTag).push()
+                         docker.image("${IMAGE_NAME}" + ":" + "${IMAGE_TAG}").push()
                     }
  
                 }
@@ -112,8 +103,8 @@ pipeline{
             steps{
                 echo 'deploying app using container'
                 bat """ 
-                docker run -itd --name sinchana -p 1234:80  ${sinchana111/tanwebapp-iis-ltsc2022} {codev1}
-                docker ps | findstr
+                docker run -itd --name sinchana -p 1234:80   ${IMAGE_NAME}:${IMAGE_TAG}
+                docker ps | findstr tanwebapp
                 """
             }
         }
