@@ -70,6 +70,28 @@ pipeline{
             }
         }  
 
+        //add stage to scan using trivy is no high , critical vlne then proceed else stop pipeline
+         stage('Trivy Scan') {
+            steps {
+                echo 'Starting Trivy scan for vulnerabilities'
+                script {
+                    def imageName = "tanwebapp-iis-ltsc2022"
+                    def imageTag = "codev1"
+                    def imageFullName = "${imageName}:${imageTag}"
+
+                    // Run Trivy scan and capture the output
+                    def trivyCommand = """trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress ${imageFullName}"""
+                    try {
+                        bat trivyCommand
+                    } catch (Exception e) {
+                        error "Trivy scan found vulnerabilities. Stopping the pipeline."
+                    }
+                }
+            }
+        }
+
+
+
         //pushing image to docker hub
         stage('Docker hub image push'){
             steps{
