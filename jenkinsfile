@@ -6,6 +6,7 @@ pipeline{
         REPO_NAME = 'https://github.com/sinchana9999/html-sample-app-sinchana.git'
         BRANCH_NAME = 'master'
         SONAR_TOKEN = credentials('admintoken')
+        DOCKER_CREDS = 'dockersinchana'
         SONAR_PROJECT_KEY = 'sinchanaapp'
         SONAR_SERVER_NAME = 'sinsonarqube' //name given for the sonarqube link in jenkins manage settings
     }
@@ -68,6 +69,22 @@ pipeline{
                 bat 'docker images | findstr tanwebapp'
             }
         }  
+
+        //pushing image to docker hub
+        stage('Docker hub image push'){
+            steps{
+                echo 'Pushing image to docker hub'
+                script{
+                    def imageName = "sinchana/hello-world"
+                    def imageTag = "codev1"
+                    def hubcreds = "${DOCKER_CREDS}"
+                    docker.withRegistry('https://registry.hub.docker.com', hubcreds){
+                        docker.image(imageName + ":" + imageTag).push()
+                    }
+ 
+                }
+            }
+        }
         
     }
 }
