@@ -76,7 +76,7 @@ pipeline{
                 echo 'Pushing image to docker hub'
                 script{
                     def imageName = "sinchana/hello-world"
-                    def imageTag = "codev1"
+                    def imageTag = "latest"
                     def hubcreds = "${DOCKER_CREDS}"
                     docker.withRegistry('https://registry.hub.docker.com', hubcreds){
                         docker.image(imageName + ":" + imageTag).push()
