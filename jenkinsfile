@@ -117,7 +117,7 @@ pipeline{
         stage('using zap to do '){
             // only given label agent can run this stage job 
             agent {
-                label 'ashu-linux'
+                label 'sinch-linux'
             }
             steps {
                 git url: "${REPO_NAME}", branch: "${BRANCH_NAME}"
