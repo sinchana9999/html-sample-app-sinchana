@@ -111,7 +111,7 @@ pipeline{
                 bat """
                 echo trying to remove container with same name 
                 docker rm sinchappc1 -f  >null 2>&1 || echo COntainer found found 
-                docker  run -itd --name sinchappc1 -p 1234:80  ${IMAGE_NAME}:${IMAGE_TAG}
+                docker  run -itd --name sinchappc1 -p 1987:80  ${IMAGE_NAME}:${IMAGE_TAG}
                 docker  ps | findstr sinchappc1 
                 """
             }
