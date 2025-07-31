@@ -12,6 +12,7 @@ pipeline{
         TRIVY_REPORT = "trivy-sinch-report.txt"
         SONAR_PROJECT_KEY = 'sinchanaapp'
         SONAR_SERVER_NAME = 'sinsonarqube' //name given for the sonarqube link in jenkins manage settings
+        TRIVY_PATH = 'C:\\Users\\Administrator\\Documents\\tools\\trivy'
     }
     stages{
         //stage 1
@@ -74,15 +75,17 @@ pipeline{
         }  
 
         //add stage to scan using trivy is no high , critical vlne then proceed else stop pipeline
-        stage('trivy scan'){
-            steps {
-                echo "running scan"
+        stage('Scan the image using trivy'){
+            steps{
+                echo 'start scanning vuln using trivy'
                 bat """
-                set PATH=%C:\Users\Administrator\Documents\tools\trivy%;%PATH%
+                set PATH=%TRIVY_PATH%;%PATH%
                 echo PATH in Jenkins: %PATH%
-                trivy image ${IMAGE_NAME}:${IMAGE_TAG} --severity HIGH,CRITICAL --format table --report summary -o ${TRIVY_REPORT} --skip-version-check --skip-version-check """
-                }
-                }
+                trivy image ${IMAGE_NAME}:${IMAGE_TAG} --severity HIGH,CRITICAL --format table --report summary -o ${TRIVY_REPORT} --skip-version-check
+ 
+                """
+            }    
+        }
 
         //pushing image to docker hub
         stage('Docker hub image push'){
